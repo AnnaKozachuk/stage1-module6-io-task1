@@ -21,13 +21,27 @@ public class FileReader {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Error reading file: " + file.getAbsolutePath(), e);
+            // Throw a custom exception with a meaningful error message
+            throw new FileParsingException("Error reading file: " + file.getAbsolutePath(), e);
         }
 
+        // Parse data and create a Profile object
         String name = data.get("Name");
-        int age = Integer.parseInt(data.get("Age"));
+        int age;
+        try {
+            age = Integer.parseInt(data.get("Age"));
+        } catch (NumberFormatException e) {
+            // Handle parsing errors and throw a custom exception
+            throw new FileParsingException("Error parsing age in the file: " + file.getAbsolutePath(), e);
+        }
         String email = data.get("Email");
-        long phone = Long.parseLong(data.get("Phone"));
+        long phone;
+        try {
+            phone = Long.parseLong(data.get("Phone"));
+        } catch (NumberFormatException e) {
+            // Handle parsing errors and throw a custom exception
+            throw new FileParsingException("Error parsing phone number in the file: " + file.getAbsolutePath(), e);
+        }
 
         return new Profile(name, age, email, phone);
     }
